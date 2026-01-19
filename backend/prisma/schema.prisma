@@ -1,14 +1,165 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum Role {
+  ANALYST
+  LEAD
+  ADMIN
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum CaseStatus {
+  NEW
+  IN_TRIAGE
+  INVESTIGATING
+  CONTAINED
+  CLOSED
+}
+
+enum ActionType {
+  BLOCK_IP
+  DISABLE_USER
+  QUARANTINE_HOST
+}
+
+enum ActionStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  EXECUTED
+}
+
+model User {
+  id           String     @id @default(uuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         Role       @default(ANALYST)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  assignedCases Case[]    @relation("AssignedCases")
+  notes         CaseNote[]
+  requestedActions Action[] @relation("RequestedActions")
+  approvedActions  Action[] @relation("ApprovedActions")
+  auditLogs     AuditLog[]
+}
+
+model Asset {
+  id          String   @id @default(uuid())
+  hostname    String   @unique
+  owner       String?
+  criticality Severity @default(MEDIUM)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  alerts      Alert[]
+}
+
+model Alert {
+  id           String   @id @default(uuid())
+  source       String
+  title        String
+  rawPayload   Json
+  normalized   Json?
+  extractedIocs Json?
+  riskScore    Int      @default(0)
+  severity     Severity @default(LOW)
+
+  assetId      String?
+  asset        Asset?   @relation(fields: [assetId], references: [id], onDelete: SetNull)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  cases        Case[]
+}
+
+model Case {
+  id          String     @id @default(uuid())
+  title       String
+  status      CaseStatus @default(NEW)
+  severity    Severity   @default(LOW)
+
+  alertId     String
+  alert       Alert      @relation(fields: [alertId], references: [id], onDelete: Cascade)
+
+  assignedToId String?
+  assignedTo   User?     @relation("AssignedCases", fields: [assignedToId], references: [id], onDelete: SetNull)
+
+  notes       CaseNote[]
+  actions     Action[]
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  closedAt    DateTime?
+
+  @@index([status])
+  @@index([severity])
+}
+
+model CaseNote {
+  id        String   @id @default(uuid())
+  caseId    String
+  authorId  String
+  note      String
+
+  createdAt DateTime @default(now())
+
+  case      Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+}
+
+model Action {
+  id          String       @id @default(uuid())
+  caseId      String
+  actionType  ActionType
+  target      String
+  status      ActionStatus @default(REQUESTED)
+
+  requestedById String
+  requestedBy   User       @relation("RequestedActions", fields: [requestedById], references: [id], onDelete: Cascade)
+
+  approvedById  String?
+  approvedBy    User?      @relation("ApprovedActions", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  approvedAt  DateTime?
+  executedAt  DateTime?
+
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([status])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String?
+  eventType  String
+  entityType String
+  entityId   String?
+  before     Json?
+  after      Json?
+  ipAddr     String?
+  createdAt  DateTime @default(now())
+
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([eventType])
+  @@index([entityType])
 }
