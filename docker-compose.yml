@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    container_name: mini_soar_db
+    environment:
+      POSTGRES_USER: soar
+      POSTGRES_PASSWORD: soarpass
+      POSTGRES_DB: mini_soar
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
