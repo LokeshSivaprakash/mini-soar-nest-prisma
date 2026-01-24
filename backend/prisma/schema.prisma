@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum Role {
@@ -149,6 +150,7 @@ model Action {
 
 model AuditLog {
   id         String   @id @default(uuid())
+  event      String
   actorId    String?
   eventType  String
   entityType String
@@ -156,10 +158,20 @@ model AuditLog {
   before     Json?
   after      Json?
   ipAddr     String?
+  metadata   Json
   createdAt  DateTime @default(now())
 
   actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
 
   @@index([eventType])
   @@index([entityType])
+}
+
+model Playbook {
+  id              String   @id @default(uuid())
+  name            String
+  triggerSeverity Severity
+  steps           Json
+  enabled         Boolean  @default(true)
+  createdAt       DateTime @default(now())
 }
