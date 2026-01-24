@@ -67,4 +67,4 @@ npx prisma studio
 - Approve actions
 - Execute approved actions
 
-- Unauthorized access results in 401 / 403 responses.
+Unauthorized access results in 401 / 403 responses.
