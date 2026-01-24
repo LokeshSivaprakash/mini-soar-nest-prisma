@@ -37,34 +37,34 @@ npx prisma studio
 
 # API Testing Flow (High Level)
 1. Auth
-POST /auth/signup
-POST /auth/login → JWT
+- POST /auth/signup
+- POST /auth/login → JWT
 
 2. Alerts
-POST /alerts/webhook (public)
-GET /alerts (JWT)
+- POST /alerts/webhook (public)
+- GET /alerts (JWT)
 
 3. Cases & Actions
-POST /cases/:caseId/actions (request action)
-PATCH /actions/:id/approve (RBAC enforced)
-PATCH /actions/:id/execute
+- POST /cases/:caseId/actions (request action)
+- PATCH /actions/:id/approve (RBAC enforced)
+- PATCH /actions/:id/execute
 
 4. Playbooks
-Create playbook
-Run playbook on case
+- Create playbook
+- Run playbook on case
 
 5. Metrics
-GET /metrics/overview
-GET /metrics/sla
+- GET /metrics/overview
+- GET /metrics/sla
 
 #RBAC Rules (MVP)
 1. Analyst
-Ingest alerts
-Request actions
-View cases
+- Ingest alerts
+- Request actions
+- View cases
 
 2. Approver
-Approve actions
-Execute approved actions
+- Approve actions
+- Execute approved actions
 
-Unauthorized access results in 401 / 403 responses.
+- Unauthorized access results in 401 / 403 responses.
