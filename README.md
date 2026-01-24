@@ -68,3 +68,15 @@ npx prisma studio
 - Execute approved actions
 
 Unauthorized access results in 401 / 403 responses.
+
+# Design Highlights
+- Strong separation of concerns (modules/services)
+- Prisma enums used to enforce state correctness
+- Guards + decorators for security
+- Audit logs designed like real compliance systems
+- Metrics optimized for SOC dashboards
+
+# Author
+- Lokesh Sivaprakash
+- Master’s in Information Systems
+- Security Operations · SOAR · Backend Systems
