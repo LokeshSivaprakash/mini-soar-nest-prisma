@@ -76,7 +76,17 @@ Unauthorized access results in 401 / 403 responses.
 - Audit logs designed like real compliance systems
 - Metrics optimized for SOC dashboards
 
+#Screenshots
+1. <img width="1920" height="1020" alt="Screenshot 2026-01-24 113155" src="https://github.com/user-attachments/assets/b9a522a9-e444-4630-9f53-b50252ffcaba" />
+2. <img width="1920" height="1020" alt="Screenshot 2026-01-24 113717" src="https://github.com/user-attachments/assets/b6613077-54f1-4979-93f1-16a015bdd173" />
+3. <img width="1915" height="960" alt="Screenshot 2026-01-24 114630" src="https://github.com/user-attachments/assets/d3d15052-81ab-4798-9a38-69ff2f0bc8ad" />
+
+
+
+
 # Author
 - Lokesh Sivaprakash
 - Master’s in Information Systems
 - Security Operations · SOAR · Backend Systems
+
+
